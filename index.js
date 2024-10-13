@@ -1,5 +1,6 @@
 const csv = require("csvtojson");
 const {google} = require('googleapis');
+const readline = require("node:readline");
 const {readFile} = require('fs').promises;
 
 const csvFilePath = './data.csv'
@@ -7,9 +8,14 @@ const csvFilePath = './data.csv'
 *  TODO: read all older sheets for check for more values in categories
 * */
 
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+});
+
 const categories = {
-    'ПАЗАР': {columns: 'A3:B14', values: ['Tabako Ilevan Ood', 'KAM MARKET']},
-    'РЕСТОРАНТИ': {columns: 'C3:D14', values: ['Takeaway.com', 'ReZZo']},
+    'ПАЗАР': {columns: 'A3:B14', values: ['Tabako Ilevan Ood', 'KAM MARKET','Tobacco Garden Bar', 'eBag.bg', 'Fantastico']},
+    'РЕСТОРАНТИ': {columns: 'C3:D14', values: ['Takeaway.com', 'ReZZo','Pizza Lab Gtc']},
     'ГОРИВО': {columns: 'E3:F14', values: ['Evpoint App']},
     'ЗАБАВЛЕНИЯ': {columns: 'G3:H14', values: ['Pepe End Sil Eood']},
     'ЛЕКАРСВА': {columns: 'I3:J14', values: ['Nadezhda Hospital', 'Angelina Orfey Bakalova', 'dm drogerie']},
@@ -49,9 +55,17 @@ function prepareCategories() {
     });
 }
 
-async function extractCSV() {
+async function getDates() {
+    let dates = await new Promise(resolve => {
+        rl.question(`Enter Date range separated by _ (2024-12-31_2024-12-31):`, resolve);
+    });
+    dates = dates.split('_')
+    return {startDate: new Date(dates[0]), endDate: new Date(dates[1])};
+}
+
+async function extractCSV(dates) {
     jsonData = await csv().fromFile(csvFilePath);
-    jsonData = jsonData.filter(el => el.Amount < 0).map(el => ([el['Description'], Math.round(Math.abs(el['Amount']))]));
+    jsonData = jsonData.filter(el => el.Amount < 0 && new Date(el['Started Date']) >= dates.startDate && new Date(el['Started Date']) <= dates.endDate).map(el => ([el['Description'], Math.round(Math.abs(el['Amount']))]));//.map(el=>([el['Description'], Math.round(Math.abs(el['Amount'])), el['Started Date']]));
     prepareCategories();
 }
 
@@ -140,5 +154,7 @@ async function insertData(auth) {
     }
 }
 
+getDates().then(dates => extractCSV(dates).then(data => authenticate().then(insertData).catch(console.error)).catch(console.error));
 
-extractCSV().then(data => authenticate().then(insertData).catch(console.error)).catch(console.error);
+
+//2024-10-06_2024-10-14
