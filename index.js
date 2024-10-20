@@ -14,14 +14,14 @@ const rl = readline.createInterface({
 });
 
 const categories = {
-    'ПАЗАР': {columns: 'A3:B14', values: ['Tabako Ilevan Ood', 'KAM MARKET','Tobacco Garden Bar', 'eBag.bg', 'Fantastico']},
-    'РЕСТОРАНТИ': {columns: 'C3:D14', values: ['Takeaway.com', 'ReZZo','Pizza Lab Gtc']},
-    'ГОРИВО': {columns: 'E3:F14', values: ['Evpoint App']},
+    'ПАЗАР': {columns: 'A3:B14', values: ['Tabako Ilevan Ood', 'KAM MARKET','Tobacco Garden Bar', 'eBag.bg', 'Fantastico','butcher Bozmov']},
+    'РЕСТОРАНТИ': {columns: 'C3:D14', values: ['Takeaway.com', 'ReZZo','Pizza Lab Gtc', '100ita']},
+    'ГОРИВО': {columns: 'E3:F14', values: ['Evpoint App', 'LUKOIL']},
     'ЗАБАВЛЕНИЯ': {columns: 'G3:H14', values: ['Pepe End Sil Eood']},
     'ЛЕКАРСВА': {columns: 'I3:J14', values: ['Nadezhda Hospital', 'Angelina Orfey Bakalova', 'dm drogerie']},
     'СМЕТКИ': {columns: 'K3:L14', values: ['Vivacom', 'Netflix']},
     'ЗА ДОМА': {columns: 'M3:N14', values: []},
-    'ПОДАРАЦИ': {columns: 'O3:P14', values: ['Amazon']},
+    'ПОДАРАЦИ': {columns: 'O3:P14', values: ['Amazon', '100 grama sladki']},
     'UNIDENTIFIED': {columns: 'Q3:R1000', values: []},
 }
 categories['UNIDENTIFIED'].values = Object.keys(categories).map(key => categories[key].values).reduce((accumulator, currentArray) => {
@@ -157,4 +157,4 @@ async function insertData(auth) {
 getDates().then(dates => extractCSV(dates).then(data => authenticate().then(insertData).catch(console.error)).catch(console.error));
 
 
-//2024-10-06_2024-10-14
+//2024-10-17_2024-10-21
